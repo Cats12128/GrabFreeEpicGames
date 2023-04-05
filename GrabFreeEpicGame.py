@@ -18,6 +18,7 @@ getImage = ".\GetImage.png"
 placeOrderImage = ".\PlaceOrderImage.png"
 InLibraryImage = ".\InLibraryImage.png"
 currentGame = 0
+maxNumOfGames = 2
 
 def FindClick(image): #This function takes an image, constantly search the screen for a match, then clicks it. Then prints which image it matched.
     
@@ -72,7 +73,7 @@ while True:
         elif freeNowLoc:
             print(f'Found image matching {freeNowImage}')
             if currentGame == 0:
-                numFreeGames = 2
+                numFreeGames = maxNumOfGames
             print(f'Number of Free Games: {numFreeGames}')
             print(f'Free Now button found at" {freeNowLoc}')
             x_val = freeNowLoc[currentGame].left + (freeNowLoc[currentGame].width/2)
