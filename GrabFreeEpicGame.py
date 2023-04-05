@@ -13,10 +13,10 @@ debug = True
 url = "https://store.epicgames.com/en-US/"
 
 #images to match
-freeNowImage = ".\FreeNowImage.png"
-getImage = ".\GetImage.png"
-placeOrderImage = ".\PlaceOrderImage.png"
-InLibraryImage = ".\InLibraryImage.png"
+FREENOWIMAGE = ".images\FreeNowImage.png"
+GETIMAGE = ".images\GetImage.png"
+PLACEORDERIMAGE = ".images\PlaceOrderImage.png"
+INLIBRARYIMAGE = ".images\InLibraryImage.png"
 currentGame = 0
 maxNumOfGames = 2
 
@@ -25,7 +25,7 @@ def FindClick(image): #This function takes an image, constantly search the scree
     while True:
         sleep(2)
         getLoc = pyautogui.locateOnScreen(image, confidence=.95)
-        alreadyInLibrary = pyautogui.locateOnScreen(InLibraryImage, confidence=.95)
+        alreadyInLibrary = pyautogui.locateOnScreen(INLIBRARYIMAGE, confidence=.95)
         if getLoc:
             x_val = getLoc.left + (getLoc.width/2)
             y_val = getLoc.top + (getLoc.height/2)
@@ -62,7 +62,7 @@ while True:
     while True:
         
         #look for freeNowImage on screen
-        freeNowLoc = pyautogui.locateAllOnScreen(freeNowImage, grayscale=True, confidence=.92)
+        freeNowLoc = pyautogui.locateAllOnScreen(FREENOWIMAGE, grayscale=True, confidence=.92)
         #saves result as a list instead of a generator
         freeNowLoc = list(freeNowLoc)
         #if not found it prints NOT FOUND and scrolls down
@@ -71,7 +71,7 @@ while True:
             pyautogui.scroll(-400)
                 
         elif freeNowLoc:
-            print(f'Found image matching {freeNowImage}')
+            print(f'Found image matching {FREENOWIMAGE}')
             if currentGame == 0:
                 numFreeGames = maxNumOfGames
             print(f'Number of Free Games: {numFreeGames}')
@@ -82,8 +82,8 @@ while True:
             currentGame += 1
             break
     
-    FindClick(getImage)    
-    FindClick(placeOrderImage)
+    FindClick(GETIMAGE)    
+    FindClick(PLACEORDERIMAGE)
 
     if currentGame >= numFreeGames:
         break
