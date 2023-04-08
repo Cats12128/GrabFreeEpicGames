@@ -7,21 +7,11 @@ import subprocess
 import cv2 as cv
 import numpy as np
 from GrabFreeEpicGame import DrawRectangle
+from GrabFreeEpicGame import *
 
-
-fni = "images\FreeNowImage.png"
-c=.95
-sleep(.5)
-while True:
-    print(f"c is {c}")
-    locations = p.locateAllOnScreen(fni, confidence=c)
-    locations = list(locations)
-    c -= .05
-    if locations:
-        print(f"locations found: {locations}")
-        print(f'c is {c}')
-        DrawRectangle(locations)
-        quit()
-    elif c==0:
-        print("c is 0, no matches")
-        quit()
+tab_presses = 45
+sleep(1)
+for press in range(tab_presses):
+    sleep(.05)
+    pyautogui.press('tab')
+pyautogui.press("enter")

@@ -5,6 +5,7 @@ import webbrowser as web
 from time import sleep
 import subprocess
 import pygetwindow
+from selenium import webdriver
 
 #variables
 url = "https://store.epicgames.com/en-US/"
@@ -13,31 +14,39 @@ windowname = "epic"
 currentGame = 0
 maxNumOfGames = 2
 pyautogui.FAILSAFE = True
+confidence = .70
+tabsToGame = 46
 
 #images to match
 FREENOWIMAGE = "images\FreeNowImage.png"
 GETIMAGE = "images\GetImage.png"
 PLACEORDERIMAGE = "images\PlaceOrderImage.png"
 INLIBRARYIMAGE = "images\InLibraryImage.png"
+FREEGAMESIMAGE = "images\FreeGamesImage.png"
+CONTINUEIMAGE = "images\ContinueImage.png"
+EPICLOGOIMAGE = "images\EpicLogoImage.png"
 
 def FindClick(image):
     while True:
-        buttonLocation = pyautogui.locateCenterOnScreen(Image1, confidence=.95)
+        buttonLocation = pyautogui.locateCenterOnScreen(image, confidence=confidence)
         if buttonLocation:
             pyautogui.click(buttonLocation)
             return print(f'Clicked on location matching {image}')
  
 
-def Find1Of2Images(image1, image2):
+def Find1OfManyImages(GETIMAGE, INLIBRARYIMAGE, CONTINUEIMAGE):
+    print("Searching for GET or IN LIBRARY or CONTINUE")
     while True:
-        sleep(2)
-        getButtonLocation = pyautogui.locateCenterOnScreen(image1, confidence=.95)
-        alreadyInLibrary = pyautogui.locateCenterOnScreen(image2, confidence=.95)
+        getButtonLocation = pyautogui.locateCenterOnScreen(GETIMAGE, grayscale=True, confidence=confidence)
+        alreadyInLibrary = pyautogui.locateCenterOnScreen(INLIBRARYIMAGE, confidence=confidence)
+        matureContinue = pyautogui.locateCenterOnScreen(CONTINUEIMAGE, confidence=confidence)
         if getButtonLocation:
-            #x_val = getLoc.left + (getLoc.width/2)
-            #y_val = getLoc.top + (getLoc.height/2)
             pyautogui.click(getButtonLocation)
-            return print(f'Clicked on location matching {image1}')
+            print(f'Clicked Get Button: {GETIMAGE}')
+            return FindClick(PLACEORDERIMAGE)
+        elif matureContinue:
+            FindClick(CONTINUEIMAGE)
+            continue
         elif alreadyInLibrary:
             return print('Game already redeemed')
                 
@@ -64,36 +73,27 @@ def openApplicationAndMax(filepath, windowname):
     window = pygetwindow.getActiveWindow()
     window.maximize()
 
-def moveCursorToCenterScreen():
+def moveCursorToCenterScreen(time=0):
     screenSizeX = pyautogui.size()[0]
     screenSizeY = pyautogui.size()[1]
-    pyautogui.moveTo(screenSizeX/2, screenSizeY/2)
+    pyautogui.dragTo(screenSizeX/2, screenSizeY/2 ,duration=time)
+
+def ClickFreeGames(css):
+    driver = webdriver.Chrome()
+    driver.get(url)
+    # geeting the button by class name
+    button = driver.find_element_by_class_name("css-11xvn05")
+    button.click()
+            
 
 if __name__ == "__main__":
     while True:
         openUrlInBrowserAndMax(url)
-        while True:
-            freeNowButtonLocationS = pyautogui.locateAllOnScreen(FREENOWIMAGE, grayscale=True, confidence=.92)
-            freeNowButtonLocationS = list(freeNowButtonLocationS) #saves result as a list instead of a generator
-            
-            if not freeNowButtonLocationS:
-                print("NOT FOUND")
-                pyautogui.scroll(-400)
-                    
-            elif freeNowButtonLocationS:
-                print(f'Found image matching {FREENOWIMAGE}')
-                if currentGame == 0:
-                    numFreeGames = maxNumOfGames
-                print(f'Number of Free Games: {numFreeGames}')
-                print(f'Free Now button found at" {freeNowButtonLocationS}')
-                x_val = freeNowButtonLocationS[currentGame].left + (freeNowButtonLocationS[currentGame].width/2)
-                y_val = freeNowButtonLocationS[currentGame].top + (freeNowButtonLocationS[currentGame].height/2)
-                pyautogui.click(x=x_val, y=y_val)
-                currentGame += 1
-                break
-        
-        FindClick(GETIMAGE)    
-        Find1Of2Images(PLACEORDERIMAGE, INLIBRARYIMAGE)
+        sleep(2)
+        #moveCursorToCenterScreen(time=2)
+        ClickFreeGames(FREEGAMESIMAGE)        
+        Find1OfManyImages(GETIMAGE, INLIBRARYIMAGE, CONTINUEIMAGE)
+                 
 
-        if currentGame >= numFreeGames:
+        if currentGame >= maxNumOfGames:
             break
