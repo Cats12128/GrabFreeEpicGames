@@ -2,34 +2,33 @@ import pyautogui
 import cv2 as cv
 import numpy as np
 import webbrowser as web
-import win32gui, win32con
 from time import sleep
 import subprocess
+import pygetwindow
 
-
-debug = True
-
-#sets url to open
+#variables
 url = "https://store.epicgames.com/en-US/"
-
-#images to match
-FREENOWIMAGE = ".images\FreeNowImage.png"
-GETIMAGE = ".images\GetImage.png"
-PLACEORDERIMAGE = ".images\PlaceOrderImage.png"
-INLIBRARYIMAGE = ".images\InLibraryImage.png"
+filepath = "Z:\Program Files (x86)\Epic Games\Launcher\Portal\Binaries\Win32\EpicGamesLauncher.exe"
+windowname = "epic"
 currentGame = 0
 maxNumOfGames = 2
+pyautogui.FAILSAFE = True
 
-def FindClick(image): #This function takes an image, constantly search the screen for a match, then clicks it. Then prints which image it matched.
-    
+#images to match
+FREENOWIMAGE = "images\FreeNowImage.png"
+GETIMAGE = "images\GetImage.png"
+PLACEORDERIMAGE = "images\PlaceOrderImage.png"
+INLIBRARYIMAGE = "images\InLibraryImage.png"
+
+def FindClick(image):
     while True:
         sleep(2)
         getLoc = pyautogui.locateOnScreen(image, confidence=.95)
         alreadyInLibrary = pyautogui.locateOnScreen(INLIBRARYIMAGE, confidence=.95)
         if getLoc:
-            x_val = getLoc.left + (getLoc.width/2)
-            y_val = getLoc.top + (getLoc.height/2)
-            pyautogui.click(x=x_val, y=y_val)
+            #x_val = getLoc.left + (getLoc.width/2)
+            #y_val = getLoc.top + (getLoc.height/2)
+            pyautogui.click(getLoc.center())
             return print(f'Clicked on location matching {image}')
         elif alreadyInLibrary:
             return print('Game already redeemed')
@@ -44,28 +43,29 @@ def DrawRectangle(LocAllImg):
     cv.imshow("Screenshot", screenshot)
     cv.waitKey(0)
 
-def openEpicInBrowser():#opens url in browser, then maximize
-    #open {url} in default browser in new tab and raises the window
+def openUrlInBrowserAndMax(url):
     web.open(url, new=0, autoraise=True)
-    
-    #assigns the window to hwnd
-    hwnd = win32gui.GetForegroundWindow()
-    #maximizes hwnd (the window)
-    win32gui.ShowWindow(hwnd, win32con.SW_MAXIMIZE)
-    sleep(2)
+    sleep(1)
+    chromeWindow = pygetwindow.getWindowsWithTitle("chrome")[0]
+    chromeWindow.maximize()
+
+def openApplication(filepath, windowname):
+    subprocess.call(filepath)
+    sleep(1)
+    window = pygetwindow.getWindowsWithTitle(windowname)[0]
+    window.maximize()
+
+def moveCursorToCenter():
     screenSizeX = pyautogui.size()[0]
     screenSizeY = pyautogui.size()[1]
     pyautogui.moveTo(screenSizeX/2, screenSizeY/2)
 
 while True:
-    openEpicInBrowser()
+    openUrlInBrowserAndMax(url)
     while True:
-        
-        #look for freeNowImage on screen
         freeNowLoc = pyautogui.locateAllOnScreen(FREENOWIMAGE, grayscale=True, confidence=.92)
-        #saves result as a list instead of a generator
-        freeNowLoc = list(freeNowLoc)
-        #if not found it prints NOT FOUND and scrolls down
+        freeNowLoc = list(freeNowLoc) #saves result as a list instead of a generator
+        
         if not freeNowLoc:
             print("NOT FOUND")
             pyautogui.scroll(-400)
