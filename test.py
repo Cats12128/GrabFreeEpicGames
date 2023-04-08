@@ -7,8 +7,11 @@ import cv2 as cv
 import numpy as np
 from GrabFreeEpicGame import DrawRectangle
 
+print("TEST")
+input()
+'''
 fni = "images\FreeNowImage.png"
 c=.95           
 locations = p.locateAllOnScreen(fni,confidence=c)
 locations = list(locations)
-DrawRectangle(locations)
+DrawRectangle(locations)'''
