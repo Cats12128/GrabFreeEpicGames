@@ -16,6 +16,7 @@ maxNumOfGames = 2
 pyautogui.FAILSAFE = True
 confidence = .70
 tabsToGame = 46
+css = "css-aere9z"
 
 #images to match
 FREENOWIMAGE = "images\FreeNowImage.png"
@@ -33,7 +34,6 @@ def FindClick(image):
             pyautogui.click(buttonLocation)
             return print(f'Clicked on location matching {image}')
  
-
 def Find1OfManyImages(GETIMAGE, INLIBRARYIMAGE, CONTINUEIMAGE):
     print("Searching for GET or IN LIBRARY or CONTINUE")
     while True:
@@ -49,7 +49,6 @@ def Find1OfManyImages(GETIMAGE, INLIBRARYIMAGE, CONTINUEIMAGE):
             continue
         elif alreadyInLibrary:
             return print('Game already redeemed')
-                
 
 def DrawRectangle(LocAllImg):
     screenshot = pyautogui.screenshot()
@@ -82,7 +81,7 @@ def ClickFreeGames(css):
     driver = webdriver.Chrome()
     driver.get(url)
     # geeting the button by class name
-    button = driver.find_element_by_class_name("css-11xvn05")
+    button = driver.find_elements_by_class_name(css)
     button.click()
             
 
