@@ -16,7 +16,7 @@ maxNumOfGames = 2
 pyautogui.FAILSAFE = True
 confidence = .70
 tabsToGame = 46
-css = "css-aere9z"
+css = "css-11xvn05"#"css-aere9z"
 
 #images to match
 FREENOWIMAGE = "images\FreeNowImage.png"
