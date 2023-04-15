@@ -84,10 +84,20 @@ def ClickFreeGames(css):
     button = driver.find_elements_by_class_name(css)
     button.click()
             
+def InitializeSelenium(url, user):
+    PATH = "C:\Program Files(86x)\chromedriver.exe"
+    options = Options()
+    options.add_argument(f"user-data-dir=C:\\Users\\{user}\\AppData\\Local\\Google\\Chrome\\User Data\\")#Path to your chrome profile
+    options.add_argument('profile-directory=Default')
+    options.add_argument("start-maximized")
+    # options.add_argument('--no-sandbox')
+    service = ChromeService(executable_path=ChromeDriverManager().install())
+    driver = webdriver.Chrome(executable_path=PATH, options=options, service=service)
+    driver.get(url)
 
 if __name__ == "__main__":
     while True:
-        openUrlInBrowserAndMax(url)
+        InitializeSelenium(url, "Mike")
         sleep(2)
         #moveCursorToCenterScreen(time=2)
         ClickFreeGames(FREEGAMESIMAGE)        
