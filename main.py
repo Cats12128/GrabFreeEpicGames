@@ -19,7 +19,7 @@ FREE_NOW_LINK_CLASS = "css-11xvn05" # this is the css for the "Free Now" text
 
 MATURE_CONTINUE_CLASS = "css-1a6we1t" # use By.CLASS_NAME
 GET_BUTTON_CLASS = "css-195czy3"
-PLACE_ORDER_CLASS = "payment__action-container"
+PLACE_ORDER_CLASS = "payment-btn payment-order-confirm__btn payment-btn--primary"
 URL = "https://store.epicgames.com/en-US/"
 user = "Mike"
 PATH = "C:\Program Files(86x)\chromedriver.exe"
@@ -81,9 +81,22 @@ print("right before press button(MATURE CONTINUE)")
 press_button_with_class(MATURE_CONTINUE_CLASS)
 print("right before press button(GET BUTTON)")
 press_button_with_class(GET_BUTTON_CLASS)
-input("STOPPED AFTER GET BUTTON")
+sleep(5) 
 
 
+
+driver.switch_to.frame(driver.find_element(By.TAG_NAME, "iframe"))
+
+element = driver.find_element(By.CLASS_NAME, "payment-order-confirm")
+if element:
+    element.click()
+    print("we done it")
+
+# press_button_with_class(PLACE_ORDER_CLASS)
+
+    
+
+    
 
 # try:
 #     input("WAITING")
