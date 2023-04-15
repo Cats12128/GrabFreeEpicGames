@@ -45,10 +45,10 @@ def press_button_with_class(html_class, wait_time=5):
 
 options = Options()
 if useProfile:
-    subprocess.call("taskkill /f /im chrome.exe", shell=True)
+    subprocess.call("taskkill /im chrome.exe", shell=True)
     options.add_argument(f"user-data-dir=C:\\Users\\{user}\\AppData\\Local\\Google\\Chrome\\User Data\\")#Path to your chrome profile
     options.add_argument('profile-directory=Default')
-options.add_argument("start-maximized")
+# options.add_argument("start-maximized")
 options.add_argument('--no-sandbox')
 # options.page_load_strategy = 'eager'
 service = ChromeService(executable_path=ChromeDriverManager().install())
@@ -66,7 +66,6 @@ print(f'Opening Chrome, url is: {driver.current_url}')
 # print(f'cookie is: {cookie}')
 
 press_button_with_class(FREE_NOW_LINK_CLASS)
-
 #FREE_NOW_ELEMENT = driver.find_elements(By.CLASS_NAME, FREE_NOW_LINK_CLASS)
 
 # if FREE_NOW_ELEMENT:
@@ -77,18 +76,13 @@ press_button_with_class(FREE_NOW_LINK_CLASS)
 #     print("ELEMENT NOT FOUND")
 
 # FREE_NOW_ELEMENT[0].click()
-
 print(f'url is: {driver.current_url}')
 print("right before press button(MATURE CONTINUE)")
 press_button_with_class(MATURE_CONTINUE_CLASS)
 print("right before press button(GET BUTTON)")
 press_button_with_class(GET_BUTTON_CLASS)
+input("STOPPED AFTER GET BUTTON")
 
-# element = driver.find_element(By.XPATH, "/html/body/div[7]/iframe")
-# if element:
-#     element.click()
-#     print("we done it")
-    
 
 
 # try:
