@@ -22,9 +22,9 @@ GET_BUTTON_CLASS = "css-195czy3"
 ADD_TO_CART_CLASS = "css-5cj35r" # unused until add to cart is implemented
 PLACE_ORDER_CLASS = "payment-order-confirm"
 FREE_GAME_1_XML_PATH = "/html/body/div[1]/div/div[4]/main/div[2]/div/div/div/span[4]/div/div/section/div/div[1]/div/div/a/div/div/div[1]/div[2]/div/div"
-FREE_GAME_2_XML_PATH = "/html/body/div[1]/div/div[4]/main/div[2]/div/div/div/span[4]/div/div/section/div/div[2]/div/div/a/div/div/div[1]/div[2]/div/div"
+FREE_GAME_2_XML_PATH = "/html/body/div[1]/div/div[4]/main/div[2]/div/div/div/span[4]/div/div/section/div/div[2]/div/div/a"
 URL = "https://store.epicgames.com/en-US/"
-user = "Mike"
+USERNAME = "Mike"
 PATH = "C:\Program Files(86x)\chromedriver.exe"
 
 useProfile = True
@@ -51,12 +51,10 @@ def press_button_with_custom_By(ByMethod, html_class, wait=5):
             button.click()
         pass
 
-
-
 options = Options()
 if useProfile:
     subprocess.call("taskkill /im chrome.exe", shell=True)
-    options.add_argument(f"user-data-dir=C:\\Users\\{user}\\AppData\\Local\\Google\\Chrome\\User Data\\")#Path to your chrome profile
+    options.add_argument(f"user-data-dir=C:\\Users\\{USERNAME}\\AppData\\Local\\Google\\Chrome\\User Data\\")#Path to your chrome profile
     options.add_argument('profile-directory=Default')
 options.add_argument('--no-sandbox')
 # options.add_argument("start-maximized")
@@ -68,7 +66,27 @@ print("Opening Chrome...")
 driver.get(URL)
 print(f'URL is: {driver.current_url}')
 
-press_button_with_custom_By(By.CLASS_NAME, FREE_NOW_LINK_CLASS)
+sleep(3)
+# links = driver.find_element(By.XPATH, FREE_GAME_2_XML_PATH)
+# print(f'links are {links}')
+
+
+game_links = driver.find_elements(By.CSS_SELECTOR, ".css-aere9z > div > a") # TODO make this ignore future free games
+print(game_links)
+for element in game_links:
+    print(element.get_attribute('href'))
+# free_game_1_url = game_links[0].get_attribute('href')
+# print(free_game_1_url)
+
+
+quit()
+###############################
+#######   END PROGRAM   #######
+###############################
+
+links[1].click()
+sleep(5)
+
 print(f'\nurl is: {driver.current_url}')
 print("\nright before press button(MATURE CONTINUE)")
 press_button_with_custom_By(By.CLASS_NAME, MATURE_CONTINUE_CLASS)
