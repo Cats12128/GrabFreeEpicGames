@@ -43,8 +43,6 @@ def press_place_order(wait=5):
       press_button_with_custom_By(By.CLASS_NAME, PLACE_ORDER_CLASS)
     pass
     
-    
-
 
 def press_button_with_custom_By(ByMethod, html_class, wait=5):
   button = False
@@ -109,9 +107,9 @@ for game in free_game_url_dict:
   print(f'Current URL: {driver.current_url}')
   print('\n' + 'Checking for Mature Content Button')
   press_button_with_custom_By(By.CLASS_NAME, MATURE_CONTINUE_CLASS)
-  print('\n' + 'Looking for Get Button')
-  press_button_with_custom_By(By.CLASS_NAME, GET_BUTTON_CLASS)
-  press_place_order()
+  print('\n' + 'Looking for Add to Cart Button')
+  press_button_with_custom_By(By.CLASS_NAME, ADD_TO_CART_CLASS)
+  input()
 
 quit()
 ###############################
