@@ -6,16 +6,11 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import NoSuchElementException
 from time import sleep
 
-
-# Either one of the below FREE_NOW_LINK_CLASS can be used. Both are provided for future proofing.
-# If epic changes the web page, it may be necessary to use the other variable.
-# Then, if neither work, it will be necessary to go back into the html to find the class(es) and re-set the variables
-
-
-# FREE_NOW_LINK_CLASS = "css-aere9z" # this is the css for the div containing the actual link
-FREE_NOW_LINK_CLASS = "css-11xvn05" # this is the css for the "Free Now" text
+FREE_NOW_LINK_CLASS = "css-aere9z" # this is the css for the div containing the actual link
+FREE_NOW_TEXT_CLASS = "css-11xvn05" # this is the css for the "Free Now" text
 
 MATURE_CONTINUE_CLASS = "css-1a6we1t" # use By.CLASS_NAME
 GET_BUTTON_CLASS = "css-195czy3"
@@ -27,7 +22,8 @@ URL = "https://store.epicgames.com/en-US/"
 USERNAME = "Mike"
 PATH = "C:\Program Files(86x)\chromedriver.exe"
 
-useProfile = True
+useProfile = False
+replit = True
 
 def press_place_order():
     iframe = driver.find_element(By.CSS_SELECTOR, "#webPurchaseContainer > iframe")
@@ -54,29 +50,39 @@ def press_button_with_custom_By(ByMethod, html_class, wait=5):
 options = Options()
 if useProfile:
     subprocess.call("taskkill /im chrome.exe", shell=True)
-    options.add_argument(f"user-data-dir=C:\\Users\\{USERNAME}\\AppData\\Local\\Google\\Chrome\\User Data\\")#Path to your chrome profile
+    options.add_argument(f"user-data-dir=C:\\Users\\{USERNAME}\\AppData\\Local\\Google\\Chrome\\User Data\\")#Path to your chrome profile  
     options.add_argument('profile-directory=Default')
 options.add_argument('--no-sandbox')
+options.add_argument('--disable-dev-shm-usage')
 # options.add_argument("start-maximized")
 # options.page_load_strategy = 'eager'
 # options.add_argument("--headless=new")
 service = ChromeService(executable_path=ChromeDriverManager().install())
-driver = webdriver.Chrome(options=options, service=service)
+if not replit:
+  driver = webdriver.Chrome(options=options, service=service)
+else: 
+  driver = webdriver.Chrome(options=options)
 print("Opening Chrome...")
 driver.get(URL)
 print(f'URL is: {driver.current_url}')
 
 sleep(3)
-# links = driver.find_element(By.XPATH, FREE_GAME_2_XML_PATH)
-# print(f'links are {links}')
 
+free_game_url_dict = dict()
 
-game_links = driver.find_elements(By.CSS_SELECTOR, ".css-aere9z > div > a") # TODO make this ignore future free games
-print(game_links)
+game_links = driver.find_elements(By.CSS_SELECTOR, ".css-aere9z a")
+
 for element in game_links:
-    print(element.get_attribute('href'))
-# free_game_1_url = game_links[0].get_attribute('href')
-# print(free_game_1_url)
+  try:
+    if element.find_element(By.CLASS_NAME, FREE_NOW_TEXT_CLASS).text == "FREE NOW":
+      url = element.get_attribute('href')
+      game_name = url.rpartition("/")[-1]
+      game_name = game_name.replace("-", " ").title()
+      free_game_url_dict[game_name] = url
+      print(f'Game: {game_name}')
+      print(f'dict: {free_game_url_dict}')
+  except NoSuchElementException:
+    print(f'Next week game: {element.get_attribute("href")}')
 
 
 quit()
@@ -87,8 +93,8 @@ quit()
 links[1].click()
 sleep(5)
 
-print(f'\nurl is: {driver.current_url}')
-print("\nright before press button(MATURE CONTINUE)")
+print(f'\n" + "url is: {driver.current_url}')
+print("\n" + "right before press button(MATURE CONTINUE)")
 press_button_with_custom_By(By.CLASS_NAME, MATURE_CONTINUE_CLASS)
 print("\nright before press button(GET BUTTON)")
 press_button_with_custom_By(By.CLASS_NAME, GET_BUTTON_CLASS)
