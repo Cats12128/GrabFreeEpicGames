@@ -22,8 +22,8 @@ URL = 'https://store.epicgames.com/en-US/'
 USERNAME = 'Mike'
 PATH = 'C:\Program Files(86x)\chromedriver.exe'
 
-useProfile = False
-replit = True
+useProfile = True
+replit = False
 
 
 def press_place_order(wait=5):
@@ -65,8 +65,7 @@ def get_dict_of_free_games():
   for element in game_links:
     url = element.get_attribute('href')
     try:
-      if element.find_element(By.CLASS_NAME,
-                              FREE_NOW_TEXT_CLASS).text == 'FREE NOW':
+      if element.find_element(By.CLASS_NAME, FREE_NOW_TEXT_CLASS).text == 'FREE NOW':
         game_name = url.rpartition('/')[-1].replace('-', ' ').title()
         free_game_url_dict[game_name] = url
         print(f'FREE GAME: {game_name}')
@@ -78,9 +77,7 @@ def get_dict_of_free_games():
 options = Options()
 if useProfile:
   subprocess.call('taskkill /im chrome.exe', shell=True)
-  options.add_argument(
-    f'user-data-dir=C:\\Users\\{USERNAME}\\AppData\\Local\\Google\\Chrome\\User Data\\'
-  )  #Path to your chrome profile
+  options.add_argument(f'user-data-dir=C:\\Users\\{USERNAME}\\AppData\\Local\\Google\\Chrome\\User Data\\')  #Path to your chrome profile
   options.add_argument('profile-directory=Default')
 options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
