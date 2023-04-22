@@ -9,7 +9,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
 from time import sleep
-import webbrowser
+import undetected_chromedriver as uc
 
 ## UNUSED VARS
 FREE_NOW_LINK_CLASS = 'css-aere9z'  # this is the css for the div containing the actual link
@@ -89,7 +89,7 @@ def get_dict_of_free_games():
 options = Options()
 if Home:
     subprocess.call('taskkill /im chrome.exe', shell=True)
-    # options.add_argument(f'user-data-dir={PATH}\\Google\\Chrome\\User Data\\')  #Path to your chrome profile
+    options.add_argument(f'user-data-dir={PATH}\\Google\\Chrome\\User Data\\')  #Path to your chrome profile
     options.add_argument('profile-directory=Default')
 options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
@@ -98,7 +98,7 @@ options.add_argument('--disable-dev-shm-usage')
 # options.add_argument('--headless=new')
 if Home:
     service = ChromeService(executable_path=ChromeDriverManager().install())
-    driver = webdriver.Chrome(options=options, service=service)
+    driver = uc.Chrome(options=options, service=service)
 else:
     driver = webdriver.Chrome(options=options)
 print('Opening Chrome...')
@@ -122,6 +122,7 @@ for game in free_game_url_dict:
     press_button_with_custom_By(By.CLASS_NAME, ADD_TO_CART_CLASS)
 
 sleep(3)
+driver.get(CART_URL)
 print("Looking for Check Out Button")
 press_button_with_custom_By(By.CLASS_NAME, CHECK_OUT_CLASS)
 
