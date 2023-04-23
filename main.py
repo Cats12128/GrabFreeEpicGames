@@ -23,13 +23,19 @@ MATURE_CONTINUE_CLASS = 'css-1a6we1t'  # use By.CLASS_NAME
 ADD_TO_CART_CLASS = 'css-5cj35r'  # unused until add to cart is implemented
 PLACE_ORDER_CLASS = 'payment-order-confirm'
 CHECK_OUT_CLASS = "css-187rod9"
+IN_LIBRARY_CLASS = "css-18uwfgn"
 
 ## OTHER VARS
 URL = 'https://store.epicgames.com/en-US/'
 CART_URL = "https://store.epicgames.com/en-US/cart"
 USERNAME = 'Mike'
 PATH = os.getenv("LOCALAPPDATA")
-print(PATH)
+
+print(f'PATH = {PATH}')
+PROFILE_PATH = os.path.join(PATH, "\\Google\\Chrome\\User Data")
+
+print(f'\nPROFILE_PATH= {PROFILE_PATH}\n')
+
 
 Home = True
 debug = False
@@ -82,6 +88,17 @@ def get_dict_of_free_games():
             print(f'NEXT WEEK: {game_name}')
     return free_game_url_dict
 
+def check_for_IN_LIBRARY(ByMethod, html_class, wait=5):
+    element = False
+    try:
+        element = WebDriverWait(driver, wait).until(EC.presence_of_element_located((ByMethod, html_class)))
+    except:
+        print(f'NOT FOUND: {html_class}')
+    finally:
+        if element:
+            print(f'FOUND: {html_class}')
+            return True
+
 #################################
 #######   START PROGRAM   #######
 #################################
@@ -90,7 +107,7 @@ options = Options()
 if Home:
     subprocess.call('taskkill /im chrome.exe', shell=True)
     options.add_argument(f'user-data-dir={PATH}\\Google\\Chrome\\User Data\\')  #Path to your chrome profile
-    options.add_argument('profile-directory=Default')
+    # options.add_argument('profile-directory=Default')
 options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
 # options.add_argument('start-maximized')
@@ -119,16 +136,19 @@ for game in free_game_url_dict:
     print('\n' + 'Checking for Mature Content Button')
     press_button_with_custom_By(By.CLASS_NAME, MATURE_CONTINUE_CLASS)
     print('\n' + 'Looking for Add to Cart Button')
-    press_button_with_custom_By(By.CLASS_NAME, ADD_TO_CART_CLASS)
+    in_library = check_for_IN_LIBRARY(By.CLASS_NAME, IN_LIBRARY_CLASS)
+    if not in_library:
+        press_button_with_custom_By(By.CLASS_NAME, ADD_TO_CART_CLASS)
 
 sleep(3)
 driver.get(CART_URL)
 print("Looking for Check Out Button")
 press_button_with_custom_By(By.CLASS_NAME, CHECK_OUT_CLASS)
 
-driver.close()
 
-input()
+input('Press ENTER to CONFIRM PURCHASE')
+press_place_order()
+sleep(5)
 print("END OF PROGRAM")
 quit()
 ###############################
