@@ -11,6 +11,9 @@ from selenium.common.exceptions import NoSuchElementException
 from time import sleep
 import undetected_chromedriver as uc
 
+#TODO stop weird tab from opening
+#TODO open a new tab
+
 ## UNUSED VARS
 FREE_NOW_LINK_CLASS = 'css-aere9z'  # this is the css for the div containing the actual link
 FREE_NOW_TEXT_CLASS = 'css-11xvn05'  # this is the css for the 'Free Now' text
