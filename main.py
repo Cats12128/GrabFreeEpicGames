@@ -11,25 +11,23 @@ from selenium.common.exceptions import NoSuchElementException
 from time import sleep
 import undetected_chromedriver as uc
 
-#TODO stop weird tab from opening
-#TODO open a new tab
-
 ## UNUSED VARS
-FREE_NOW_LINK_CLASS = 'css-aere9z'  # this is the css for the div containing the actual link
-FREE_NOW_TEXT_CLASS = 'css-11xvn05'  # this is the css for the 'Free Now' text
-GET_BUTTON_CLASS = 'css-195czy3'
-FREE_GAME_1_XML_PATH = '/html/body/div[1]/div/div[4]/main/div[2]/div/div/div/span[4]/div/div/section/div/div[1]/div/div/a/div/div/div[1]/div[2]/div/div'
-FREE_GAME_2_XML_PATH = '/html/body/div[1]/div/div[4]/main/div[2]/div/div/div/span[4]/div/div/section/div/div[2]/div/div/a'
+# FREE_NOW_TEXT_CLASS = 'css-11xvn05'  # this is the css for the 'Free Now' text
+# GET_BUTTON_CLASS = 'css-195czy3'
+# FREE_GAME_1_XML_PATH = '/html/body/div[1]/div/div[4]/main/div[2]/div/div/div/span[4]/div/div/section/div/div[1]/div/div/a/div/div/div[1]/div[2]/div/div'
+# FREE_GAME_2_XML_PATH = '/html/body/div[1]/div/div[4]/main/div[2]/div/div/div/span[4]/div/div/section/div/div[2]/div/div/a'
+# MATURE_CONTINUE_CLASS = 'css-1a6we1t'  # use By.CLASS_NAME
+# ADD_TO_CART_CLASS = 'css-5cj35r'  # unused until add to cart is implemented
+# IN_LIBRARY_CLASS = "css-18uwfgn"
 
 ## CLASS VARS
-MATURE_CONTINUE_CLASS = 'css-1a6we1t'  # use By.CLASS_NAME
-ADD_TO_CART_CLASS = 'css-5cj35r'  # unused until add to cart is implemented
+ADD_CLASS = 'add'  # this is the css for the div containing the actual link
 PLACE_ORDER_CLASS = 'payment-order-confirm'
-CHECK_OUT_CLASS = "css-187rod9"
-IN_LIBRARY_CLASS = "css-18uwfgn"
+CHECK_OUT_CLASS = "btn checkout"
+SHOPPING_CART_CLASS = "footer-btn-group"
 
 ## OTHER VARS
-URL = 'https://store.epicgames.com/en-US/'
+URL = 'https://www.unrealengine.com/marketplace/en-US/assets?tag=4910'
 CART_URL = "https://store.epicgames.com/en-US/cart"
 USERNAME = 'Mike'
 PATH = os.getenv("LOCALAPPDATA")
@@ -41,7 +39,7 @@ print(f'\nPROFILE_PATH= {PROFILE_PATH}\n')
 
 
 Home = True
-debug = False
+debug = True
 
 
 def press_place_order(wait=5):
@@ -74,13 +72,13 @@ def press_button_with_custom_By(ByMethod, html_class, wait=5):
             button.click()
         pass
 
-def get_dict_of_free_games():
+def get_dict_of_free_items():
     free_game_url_dict = dict()
-    game_links = driver.find_elements(By.CSS_SELECTOR, f'.{FREE_NOW_LINK_CLASS} a')
+    game_links = driver.find_elements(By.CLASS_NAME, ADD_CLASS)
     for element in game_links:
-        if debug:
-            print(element.get_attribute('href'))
-        url = element.get_attribute('href')
+        # if debug:
+        #     print(element.get_attribute('href'))
+        # url = element.get_attribute('href')
         try:
             if element.find_element(By.CLASS_NAME, FREE_NOW_TEXT_CLASS).text == 'FREE NOW':
                 game_name = url.rpartition('/')[-1].replace('-', ' ').title()
@@ -127,56 +125,31 @@ print(f'Current URL: {driver.current_url}')
 
 sleep(3)
 
-free_game_url_dict = get_dict_of_free_games()
+free_items = driver.find_elements(By.CLASS_NAME, ADD_CLASS)
 if debug:
-    print(free_game_url_dict)
+    print(f'free_items= {free_items}')
 
 
-for game in free_game_url_dict:
-    # game is KEY
-    driver.get(free_game_url_dict[game])
-    print(f'Current URL: {driver.current_url}')
-    print('\n' + 'Checking for Mature Content Button')
-    press_button_with_custom_By(By.CLASS_NAME, MATURE_CONTINUE_CLASS)
-    print('\n' + 'Looking for Add to Cart Button')
-    in_library = check_for_IN_LIBRARY(By.CLASS_NAME, IN_LIBRARY_CLASS)
-    if not in_library:
-        press_button_with_custom_By(By.CLASS_NAME, ADD_TO_CART_CLASS)
+for item in free_items:
+    sleep(1)
+    item.click()
 
 sleep(3)
-driver.get(CART_URL)
+
+print("Looking for SHOPPING CART")
+press_button_with_custom_By(By.CLASS_NAME, SHOPPING_CART_CLASS)
 print("Looking for Check Out Button")
 press_button_with_custom_By(By.CLASS_NAME, CHECK_OUT_CLASS)
 
 
-input('Press ENTER to CONFIRM PURCHASE')
-press_place_order()
-sleep(5)
+confirm = input('Enter "Y" to purchase')
+if confirm == 'Y':
+    press_place_order()
+    sleep(5)
+else:
+    print('"Y" NOT ENTERED - NOT PURCHASED')
 print("END OF PROGRAM")
 quit()
 ###############################
 #######   END PROGRAM   #######
 ###############################
-
-
-# driver.switch_to.frame(driver.find_elements(By.TAG_NAME, 'iframe')[0])
-# ele = driver.find_elements(By.XPATH, '//*[@id]')
-# for x in ele:
-#   print(x.tag_name, x.get_attribute('id'))
-
-#Store iframe web element
-
-# print('NEXT IFRAME')
-# ele = driver.find_elements(By.TAG_NAME, 'fpt_frame')
-# for x in ele:
-#     print(x.tag_name, x.get_attribute('id'))
-#     driver.switch_to.frame(x)
-
-# driver.switch_to.frame(driver.find_element(By.TAG_NAME, 'iframe'))
-
-# element = driver.find_element(By.CLASS_NAME, 'payment-order-confirm')
-# if element:
-#     element.click()
-#     print(f'we clicked: {element}')
-
-# press_button_with_class(PLACE_ORDER_CLASS)
