@@ -16,18 +16,13 @@ import logging
 ADD_CLASS = 'add'
 PLACE_ORDER_CLASS = 'payment-order-confirm'
 SHOPPING_CART_CLASS = "cart-icon-wrapper"
-CHECK_OUT_CLASS = "btn checkout"
 CHECK_OUT_SELECTOR = "header#sub-nav-container div.footer-btn-group > button"
 
 ## OTHER VARS
 URL = 'https://www.unrealengine.com/marketplace/en-US/assets?tag=4910'
-CART_URL = "https://store.epicgames.com/en-US/cart"
-USERNAME = 'Mike'
 PATH = os.getenv("LOCALAPPDATA")
 
 logging.basicConfig(format='%(asctime)s %(message)s', filename='log.txt', filemode="w", encoding='utf-8', level=logging.ERROR)
-
-Home = True
 
 def press_place_order(wait=5):
     iframe = False
@@ -59,33 +54,6 @@ def press_button_with_custom_By(ByMethod, html_class, wait=5):
             print(f'Clicking {html_class}')
             button.click()
         pass
-
-def get_dict_of_free_items():
-    free_game_url_dict = dict()
-    game_links = driver.find_elements(By.CLASS_NAME, ADD_CLASS)
-    for element in game_links:
-        # logging.info(element.get_attribute('href'))
-        # url = element.get_attribute('href')
-        try:
-            if element.find_element(By.CLASS_NAME, FREE_NOW_TEXT_CLASS).text == 'FREE NOW':
-                game_name = url.rpartition('/')[-1].replace('-', ' ').title()
-                free_game_url_dict[game_name] = url
-                print(f'FREE GAME: {game_name}')
-        except NoSuchElementException:
-            game_name = url.rpartition('/')[-1].replace('-', ' ').title()
-            print(f'NEXT WEEK: {game_name}')
-    return free_game_url_dict
-
-def check_for_IN_LIBRARY(ByMethod, html_class, wait=5):
-    element = False
-    try:
-        element = WebDriverWait(driver, wait).until(EC.presence_of_element_located((ByMethod, html_class)))
-    except:
-        print(f'NOT FOUND: {html_class}')
-    finally:
-        if element:
-            print(f'FOUND: {html_class}')
-            return True
 
 #################################
 #######   START PROGRAM   #######
