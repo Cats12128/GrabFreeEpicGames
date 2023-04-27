@@ -1,0 +1,4 @@
+2023-04-26 23:00:17,842 BELOW IS THE SEARCH FOR THE SHOPPING CART
+2023-04-26 23:00:17,849 button=<undetected_chromedriver.webelement.WebElement (session="be9b6902b0bd40153700e546893a63cd", element="80ca38f8-ecac-4d3d-aedc-ff83ffbc838f")>
+2023-04-26 23:00:21,913 BELOW IS THE SEARCH FOR THE CHECKOUT BUTTON
+2023-04-26 23:00:21,920 button=<undetected_chromedriver.webelement.WebElement (session="be9b6902b0bd40153700e546893a63cd", element="cfd81dce-3db5-4c4c-8c17-30e0e67557cb")>

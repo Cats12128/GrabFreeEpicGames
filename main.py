@@ -10,21 +10,14 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
 from time import sleep
 import undetected_chromedriver as uc
-
-## UNUSED VARS
-# FREE_NOW_TEXT_CLASS = 'css-11xvn05'  # this is the css for the 'Free Now' text
-# GET_BUTTON_CLASS = 'css-195czy3'
-# FREE_GAME_1_XML_PATH = '/html/body/div[1]/div/div[4]/main/div[2]/div/div/div/span[4]/div/div/section/div/div[1]/div/div/a/div/div/div[1]/div[2]/div/div'
-# FREE_GAME_2_XML_PATH = '/html/body/div[1]/div/div[4]/main/div[2]/div/div/div/span[4]/div/div/section/div/div[2]/div/div/a'
-# MATURE_CONTINUE_CLASS = 'css-1a6we1t'  # use By.CLASS_NAME
-# ADD_TO_CART_CLASS = 'css-5cj35r'  # unused until add to cart is implemented
-# IN_LIBRARY_CLASS = "css-18uwfgn"
+import logging
 
 ## CLASS VARS
-ADD_CLASS = 'add'  # this is the css for the div containing the actual link
+ADD_CLASS = 'add'
 PLACE_ORDER_CLASS = 'payment-order-confirm'
+SHOPPING_CART_CLASS = "cart-icon-wrapper"
 CHECK_OUT_CLASS = "btn checkout"
-SHOPPING_CART_CLASS = "footer-btn-group"
+CHECK_OUT_SELECTOR = "header#sub-nav-container div.footer-btn-group > button"
 
 ## OTHER VARS
 URL = 'https://www.unrealengine.com/marketplace/en-US/assets?tag=4910'
@@ -32,15 +25,9 @@ CART_URL = "https://store.epicgames.com/en-US/cart"
 USERNAME = 'Mike'
 PATH = os.getenv("LOCALAPPDATA")
 
-print(f'PATH = {PATH}')
-PROFILE_PATH = os.path.join(PATH, "\\Google\\Chrome\\User Data")
-
-print(f'\nPROFILE_PATH= {PROFILE_PATH}\n')
-
+logging.basicConfig(format='%(asctime)s %(message)s', filename='log.txt', filemode="w", encoding='utf-8', level=logging.ERROR)
 
 Home = True
-debug = True
-
 
 def press_place_order(wait=5):
     iframe = False
@@ -68,6 +55,7 @@ def press_button_with_custom_By(ByMethod, html_class, wait=5):
         print(f'NOT FOUND: {html_class}')
     finally:
         if button:
+            logging.error(f'button={button}')
             print(f'Clicking {html_class}')
             button.click()
         pass
@@ -76,8 +64,7 @@ def get_dict_of_free_items():
     free_game_url_dict = dict()
     game_links = driver.find_elements(By.CLASS_NAME, ADD_CLASS)
     for element in game_links:
-        # if debug:
-        #     print(element.get_attribute('href'))
+        # logging.info(element.get_attribute('href'))
         # url = element.get_attribute('href')
         try:
             if element.find_element(By.CLASS_NAME, FREE_NOW_TEXT_CLASS).text == 'FREE NOW':
@@ -105,51 +92,47 @@ def check_for_IN_LIBRARY(ByMethod, html_class, wait=5):
 #################################
 
 options = Options()
-if Home:
-    subprocess.call('taskkill /im chrome.exe', shell=True)
-    options.add_argument(f'user-data-dir={PATH}\\Google\\Chrome\\User Data\\')  #Path to your chrome profile
-    # options.add_argument('profile-directory=Default')
+subprocess.call('taskkill /im chrome.exe', shell=True)
+options.add_argument(f'--user-data-dir={PATH}\\Google\\Chrome\\User Data')  #Path to your chrome profile
 options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
-# options.add_argument('start-maximized')
-# options.page_load_strategy = 'eager'
-# options.add_argument('--headless=new')
-if Home:
-    service = ChromeService(executable_path=ChromeDriverManager().install())
-    driver = uc.Chrome(options=options, service=service)
-else:
-    driver = webdriver.Chrome(options=options)
+# options.add_argument('--start-maximized')
+service = ChromeService(executable_path=ChromeDriverManager().install())
+driver = uc.Chrome(options=options, service=service)
 print('Opening Chrome...')
 driver.get(URL)
 print(f'Current URL: {driver.current_url}')
 
-sleep(3)
-
 free_items = driver.find_elements(By.CLASS_NAME, ADD_CLASS)
-if debug:
-    print(f'free_items= {free_items}')
 
+logging.info(f'free_items= {free_items}')
 
-for item in free_items:
-    sleep(1)
-    item.click()
+if free_items:
+    for item in free_items:
+        sleep(.5)
+        item.click()
 
 sleep(3)
 
 print("Looking for SHOPPING CART")
+logging.error("BELOW IS THE SEARCH FOR THE SHOPPING CART")
 press_button_with_custom_By(By.CLASS_NAME, SHOPPING_CART_CLASS)
 print("Looking for Check Out Button")
-press_button_with_custom_By(By.CLASS_NAME, CHECK_OUT_CLASS)
+sleep(4)
+logging.error("BELOW IS THE SEARCH FOR THE CHECKOUT BUTTON")
+press_button_with_custom_By(By.CSS_SELECTOR, CHECK_OUT_SELECTOR)
+# driver.find_element(By.XPATH, '//*[@id="sub-nav-container"]/div/div[2]/div[3]/div[2]/div/div[1]/section[3]/div[2]/button')
 
 
-confirm = input('Enter "Y" to purchase')
+
+confirm = input('Enter capital "Y" to purchase: ')
 if confirm == 'Y':
     press_place_order()
     sleep(5)
 else:
     print('"Y" NOT ENTERED - NOT PURCHASED')
 print("END OF PROGRAM")
-quit()
+
 ###############################
 #######   END PROGRAM   #######
 ###############################
