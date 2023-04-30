@@ -101,6 +101,8 @@ else:
     print('"Y" NOT ENTERED - NOT PURCHASED')
 print("END OF PROGRAM")
 
+#TEST
+
 ###############################
 #######   END PROGRAM   #######
 ###############################
