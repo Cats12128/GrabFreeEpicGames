@@ -10,26 +10,26 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
 from time import sleep
 import undetected_chromedriver as uc
+import logging
+import win32api
 
-## UNUSED VARS
+logging.basicConfig(filename='log.txt', filemode='w', level=logging.WARNING)
+
+## FIND BY VARIABLES
 FREE_NOW_LINK_CLASS = 'css-aere9z'  # this is the css for the div containing the actual link
 FREE_NOW_TEXT_CLASS = 'css-11xvn05'  # this is the css for the 'Free Now' text
-GET_BUTTON_CLASS = 'css-195czy3'
-FREE_GAME_1_XML_PATH = '/html/body/div[1]/div/div[4]/main/div[2]/div/div/div/span[4]/div/div/section/div/div[1]/div/div/a/div/div/div[1]/div[2]/div/div'
-FREE_GAME_2_XML_PATH = '/html/body/div[1]/div/div[4]/main/div[2]/div/div/div/span[4]/div/div/section/div/div[2]/div/div/a'
-
-## CLASS VARS
 MATURE_CONTINUE_CLASS = 'css-1a6we1t'  # use By.CLASS_NAME
 ADD_TO_CART_CLASS = 'css-5cj35r'  # unused until add to cart is implemented
 PLACE_ORDER_CLASS = 'payment-order-confirm'
 CHECK_OUT_CLASS = "css-187rod9"
+CART_PRICE_SELECTOR = "#dieselReactWrapper > div > div.css-1vplx76 > main > div:nth-child(2) > div > div > div > div > section > div > div.css-map4tx > div.css-1791idi > div > div.css-u9q8d2 > div > span"
 
-## OTHER VARS
+
+## OTHER VARIABLES
 URL = 'https://store.epicgames.com/en-US/'
 CART_URL = "https://store.epicgames.com/en-US/cart"
-USERNAME = 'Mike'
 PATH = os.getenv("LOCALAPPDATA")
-print(PATH)
+print(f'{PATH = }')
 
 Home = True
 debug = False
@@ -87,22 +87,18 @@ def get_dict_of_free_games():
 #################################
 
 options = Options()
-if Home:
-    subprocess.call('taskkill /im chrome.exe', shell=True)
-    options.add_argument(f'user-data-dir={PATH}\\Google\\Chrome\\User Data\\')  #Path to your chrome profile
-    options.add_argument('profile-directory=Default')
+
+subprocess.call('taskkill /im chrome.exe', shell=True)
+options.add_argument(f'--user-data-dir={PATH}\\Google\\Chrome\\User Data\\')  #Path to your chrome profile
 options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
-# options.add_argument('start-maximized')
-# options.page_load_strategy = 'eager'
-# options.add_argument('--headless=new')
-if Home:
-    service = ChromeService(executable_path=ChromeDriverManager().install())
-    driver = uc.Chrome(options=options, service=service)
-else:
-    driver = webdriver.Chrome(options=options)
+options.add_argument('--headless=new')
+service = ChromeService(executable_path=ChromeDriverManager().install())
+driver = uc.Chrome(options=options, service=service)
+
 print('Opening Chrome...')
 driver.get(URL)
+driver.maximize_window()
 print(f'Current URL: {driver.current_url}')
 
 sleep(3)
@@ -122,15 +118,27 @@ for game in free_game_url_dict:
     press_button_with_custom_By(By.CLASS_NAME, ADD_TO_CART_CLASS)
 
 sleep(3)
+
 driver.get(CART_URL)
+sleep(3)
+print("Confirming Price is FREE")
+price = driver.find_element(By.CSS_SELECTOR, CART_PRICE_SELECTOR).text
+logging.warning(f'{price = }')
+if price != "$0.00":
+    win32api.MessageBox(0, 'Some games in the cart are not free. Exiting Program.', 'GAMES NOT FREE', 0x00001000) 
+    driver.close()
+    quit()
+else:
+    print('😊 Confirmed Price is FREE 😊')   
+
 print("Looking for Check Out Button")
 press_button_with_custom_By(By.CLASS_NAME, CHECK_OUT_CLASS)
-
+press_place_order()
 driver.close()
 
-input()
+
 print("END OF PROGRAM")
-quit()
+
 ###############################
 #######   END PROGRAM   #######
 ###############################
