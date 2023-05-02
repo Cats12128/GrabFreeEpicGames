@@ -134,26 +134,3 @@ quit()
 ###############################
 #######   END PROGRAM   #######
 ###############################
-
-
-# driver.switch_to.frame(driver.find_elements(By.TAG_NAME, 'iframe')[0])
-# ele = driver.find_elements(By.XPATH, '//*[@id]')
-# for x in ele:
-#   print(x.tag_name, x.get_attribute('id'))
-
-#Store iframe web element
-
-# print('NEXT IFRAME')
-# ele = driver.find_elements(By.TAG_NAME, 'fpt_frame')
-# for x in ele:
-#     print(x.tag_name, x.get_attribute('id'))
-#     driver.switch_to.frame(x)
-
-# driver.switch_to.frame(driver.find_element(By.TAG_NAME, 'iframe'))
-
-# element = driver.find_element(By.CLASS_NAME, 'payment-order-confirm')
-# if element:
-#     element.click()
-#     print(f'we clicked: {element}')
-
-# press_button_with_class(PLACE_ORDER_CLASS)
