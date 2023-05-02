@@ -1,1 +1,2 @@
-WARNING:root:price = '$0.00'
+WARNING:root:in_library = None
+WARNING:root:in_library = True
