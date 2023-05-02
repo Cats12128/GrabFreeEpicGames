@@ -29,6 +29,7 @@ ADD_TO_CART_CLASS = 'css-5cj35r'  # unused until add to cart is implemented
 PLACE_ORDER_CLASS = 'payment-order-confirm'
 CHECK_OUT_CLASS = "css-187rod9"
 CART_PRICE_SELECTOR = "#dieselReactWrapper > div > div.css-1vplx76 > main > div:nth-child(2) > div > div > div > div > section > div > div.css-map4tx > div.css-1791idi > div > div.css-u9q8d2 > div > span"
+IN_LIBRARY_CLASS = "css-18uwfgn"
 
 ## OTHER VARIABLES
 URL = 'https://store.epicgames.com/en-US/'
@@ -86,6 +87,17 @@ def get_dict_of_free_games():
             print(f'NEXT WEEK: {game_name}')
     return free_game_url_dict
 
+def check_for_IN_LIBRARY(ByMethod, html_class, wait=5):
+    element = False
+    try:
+        element = WebDriverWait(driver, wait).until(EC.presence_of_element_located((ByMethod, html_class)))
+    except:
+        print(f'NOT FOUND: {html_class}')
+    finally:
+        if element:
+            print(f'FOUND: {html_class}')
+            return True
+
 #################################
 #######   START PROGRAM   #######
 #################################
@@ -119,7 +131,9 @@ for game in free_game_url_dict:
     print('\n' + 'Checking for Mature Content Button')
     press_button_with_custom_By(By.CLASS_NAME, MATURE_CONTINUE_CLASS)
     print('\n' + 'Looking for Add to Cart Button')
-    press_button_with_custom_By(By.CLASS_NAME, ADD_TO_CART_CLASS)
+    in_library = check_for_IN_LIBRARY(By.CLASS_NAME, IN_LIBRARY_CLASS)
+    if not in_library:
+        press_button_with_custom_By(By.CLASS_NAME, ADD_TO_CART_CLASS)
 
 sleep(3)
 
