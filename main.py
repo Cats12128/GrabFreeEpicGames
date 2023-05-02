@@ -15,6 +15,12 @@ import win32api
 
 logging.basicConfig(filename='log.txt', filemode='w', level=logging.WARNING)
 
+## TODO truncate numbers at end of games' url
+## TODO add login support
+## TODO add multiple account support
+## TODO test headless mode
+
+
 ## FIND BY VARIABLES
 FREE_NOW_LINK_CLASS = 'css-aere9z'  # this is the css for the div containing the actual link
 FREE_NOW_TEXT_CLASS = 'css-11xvn05'  # this is the css for the 'Free Now' text
@@ -24,16 +30,13 @@ PLACE_ORDER_CLASS = 'payment-order-confirm'
 CHECK_OUT_CLASS = "css-187rod9"
 CART_PRICE_SELECTOR = "#dieselReactWrapper > div > div.css-1vplx76 > main > div:nth-child(2) > div > div > div > div > section > div > div.css-map4tx > div.css-1791idi > div > div.css-u9q8d2 > div > span"
 
-
 ## OTHER VARIABLES
 URL = 'https://store.epicgames.com/en-US/'
 CART_URL = "https://store.epicgames.com/en-US/cart"
 PATH = os.getenv("LOCALAPPDATA")
 print(f'{PATH = }')
 
-Home = True
 debug = False
-
 
 def press_place_order(wait=5):
     iframe = False
@@ -78,6 +81,7 @@ def get_dict_of_free_games():
                 free_game_url_dict[game_name] = url
                 print(f'FREE GAME: {game_name}')
         except NoSuchElementException:
+            ## splits url at /'s, takes right most section and replaces - with spaces
             game_name = url.rpartition('/')[-1].replace('-', ' ').title()
             print(f'NEXT WEEK: {game_name}')
     return free_game_url_dict
@@ -92,7 +96,7 @@ subprocess.call('taskkill /im chrome.exe', shell=True)
 options.add_argument(f'--user-data-dir={PATH}\\Google\\Chrome\\User Data\\')  #Path to your chrome profile
 options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
-options.add_argument('--headless=new')
+# options.add_argument('--headless=new')
 service = ChromeService(executable_path=ChromeDriverManager().install())
 driver = uc.Chrome(options=options, service=service)
 
@@ -133,11 +137,12 @@ else:
 
 print("Looking for Check Out Button")
 press_button_with_custom_By(By.CLASS_NAME, CHECK_OUT_CLASS)
+sleep(3)
 press_place_order()
+sleep(3)
 driver.close()
 
-
-print("END OF PROGRAM")
+print("DONE")
 
 ###############################
 #######   END PROGRAM   #######
